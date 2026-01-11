@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.views.decorators.cache import cache_page
-from .models import Property
+from .utils import get_all_properties  # Import your new function
 
-@cache_page(60 * 15)
+# Remove @cache_page decorator
 def property_list(request):
-    properties = Property.objects.all()
-    # Convert QuerySet to a list of dictionaries
+    # Call the utility function to get data (cached or fresh)
+    properties = get_all_properties()
+    
+    # Convert QuerySet to list of dicts for JSON response
     properties_data = list(properties.values('title', 'description', 'price', 'location', 'created_at'))
     
-    # Wrap the list in a dictionary to satisfy the checker
     return JsonResponse({'properties': properties_data})
